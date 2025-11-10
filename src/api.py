@@ -1,21 +1,5 @@
 import requests
 
-# class HeadHunterAPI:
-#     """Класс для работы с hh.ru"""
-#
-#     self.employers_id = {
-#         "DeNet": 1006928,
-#         "Таттелеком": 672459,
-#         "ООО НДК": 10197972,
-#         "Т-Банк": 78638,
-#         "Sofoil LLC": 126675703,
-#         "Алабуга, ОЭЗ ППТ": 68587,
-#         "ООО Совкомбанк Технологии": 126337347,
-#         "ООО Верме": 3629847,
-#         "ООО СП Солюшен": 11545313,
-#         "STORYGOLD AI, INC": 12304464,
-#     }
-
 
 class HeadHunterAPI:
     """Класс для работы с hh.ru"""
@@ -43,18 +27,10 @@ class HeadHunterAPI:
             print(f"Произошла ошибка при запросе вакансий {self.__url}. {error}")
         else:
             self.__params["employer_id"] = employers_id
-            while self.__params.get("page") != 10:
-                response = requests.get(
-                    self.__url, headers=self.__headers, params=self.__params
-                )
+            while self.__params.get("page") != 20:
+                response = requests.get(self.__url, headers=self.__headers, params=self.__params)
                 vacancies = response.json()["items"]
                 self.__vacancies.extend(vacancies)
                 self.__params["page"] += 1
         finally:
             return self.__vacancies
-
-
-# employers_id = [12304464]
-# hh = HeadHunterAPI()
-# vacancies = hh.get_vacancies(employers_id)
-# print(vacancies)

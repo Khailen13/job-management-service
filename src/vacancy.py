@@ -17,12 +17,12 @@ class Vacancy:
 
     def __init__(
         self,
-        vacancy_id,
-        vacancy_name,
-        vacancy_url,
-        vacancy_avg_salary,
-        employer_id,
-        employer_name,
+        vacancy_id: int,
+        vacancy_name: str,
+        vacancy_url: str,
+        vacancy_avg_salary: int | float,
+        employer_id: int,
+        employer_name: str,
     ):
 
         # Исходное id вакансии
@@ -49,7 +49,7 @@ class Vacancy:
         # Название работодателя
         self.employer_name = employer_name if employer_name else "Не указано"
 
-    def __id_valiadation(self, current_id):
+    def __id_valiadation(self, current_id: str | int) -> int:
         """Проверка соответствия id положительному целому числу"""
 
         try:
@@ -59,18 +59,18 @@ class Vacancy:
         finally:
             return current_id
 
-    def __salary_validation(self, vacancy_avg_salary):
+    def __salary_validation(self, vacancy_avg_salary: str | int | float) -> float | None:
         """Проверка соответствия зарплаты положительному числу"""
 
         try:
             vacancy_avg_salary = float(vacancy_avg_salary)
             if vacancy_avg_salary < 0:
-                raise ValueError(f"Зарплата должна быть положительным числом")
+                raise ValueError("Зарплата должна быть положительным числом.")
             return vacancy_avg_salary
         except ValueError:
-            raise ValueError(f"Указанное значение зарплаты не является числом")
+            raise ValueError("Указанное значение зарплаты не является числом.")
 
-    def __url_validation(self, url) -> str:
+    def __url_validation(self, url: str) -> str:
         """Проверка формата ссылки вакансии"""
 
         url_pattern = re.compile(r"https://hh.ru/vacancy/\d+")
@@ -97,13 +97,9 @@ class Vacancy:
                 vacancy_url = vacancy.get("alternate_url")
 
                 # Крайние значения диапазона зарплаты и валюта
-                salary_start = cls.get_nested_dictionary_value(
-                    vacancy, ["salary", "from"]
-                )
+                salary_start = cls.get_nested_dictionary_value(vacancy, ["salary", "from"])
                 salary_stop = cls.get_nested_dictionary_value(vacancy, ["salary", "to"])
-                salary_currency_original = cls.get_nested_dictionary_value(
-                    vacancy, ["salary", "currency"]
-                )
+                salary_currency_original = cls.get_nested_dictionary_value(vacancy, ["salary", "currency"])
 
                 # Перевод зарплаты в рубли
                 if salary_currency_original not in ["RUR", None]:
@@ -113,21 +109,9 @@ class Vacancy:
                     currency_nominal = cls.get_nested_dictionary_value(
                         currency_rates, [salary_currency_original, "Nominal"]
                     )
-                    currency_rate = (
-                        currency_value / currency_nominal
-                        if currency_value and currency_nominal
-                        else None
-                    )
-                    salary_start = (
-                        round((salary_start * currency_rate), 2)
-                        if salary_start and currency_rate
-                        else None
-                    )
-                    salary_stop = (
-                        round((salary_stop * currency_rate), 2)
-                        if salary_stop and currency_rate
-                        else None
-                    )
+                    currency_rate = currency_value / currency_nominal if currency_value and currency_nominal else None
+                    salary_start = round((salary_start * currency_rate), 2) if salary_start and currency_rate else None
+                    salary_stop = round((salary_stop * currency_rate), 2) if salary_stop and currency_rate else None
 
                 # Среднее значение зарплаты вакансии
                 if salary_start and salary_stop:
@@ -140,14 +124,10 @@ class Vacancy:
                     vacancy_avg_salary = 0
 
                 # id работодателя
-                employer_id = cls.get_nested_dictionary_value(
-                    vacancy, ["employer", "id"]
-                )
+                employer_id = cls.get_nested_dictionary_value(vacancy, ["employer", "id"])
 
                 # название работодателя
-                employer_name = cls.get_nested_dictionary_value(
-                    vacancy, ["employer", "name"]
-                )
+                employer_name = cls.get_nested_dictionary_value(vacancy, ["employer", "name"])
 
                 # Формирования объекта класса Vacancy и добавление к списку объектов
                 vacancy_obj = cls(
@@ -175,9 +155,7 @@ class Vacancy:
         return currency_rates
 
     @staticmethod
-    def get_nested_dictionary_value(
-        dictionary: dict, consecutive_keys_list: list
-    ) -> int | float | str | None:
+    def get_nested_dictionary_value(dictionary: dict, consecutive_keys_list: list) -> int | float | str | None:
         """Выдает значение в многоуровневом словаре по последовательности ключей"""
 
         value = None
