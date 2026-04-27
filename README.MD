@@ -73,7 +73,7 @@
 
 ## Использование:
 ```
-git clone https://github.com/Khailen13/course_project2
+git clone https://github.com/Khailen13/job-management-service
 ```
 2. Установите зависимости:
 ```
